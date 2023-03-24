@@ -1,0 +1,41 @@
+{% extends "quoteapp/base.html" %}
+
+{% block content %}
+
+    {% for quote in quotes %}
+    <ul>
+        <li><label>{{ quote.quote }}</label></li>
+        <li>
+            <label>Tags:
+                {% for tag in quote.tags %}
+                <a href="{% url 'quoteapp:search_by_tag' tag=tag %}"> {{ tag }}</a>
+                {% endfor %}
+            </label>
+        </li>
+        <li><a href="{% url 'quoteapp:author_about' author_id=quote.author.author_id %}">by<b> 
+            {{ quote.author.fullname }} 
+            </b></a></li>
+        <a href="{% url 'quoteapp:details' quote_id=quote.quote_id %}">About Author</a> <!--role="button"-->
+    </ul>
+    {% endfor %}
+    <span>
+        {% if quotes.has_previous %}
+        <a href="?page=1">&lt;&lt;Start page</a>
+        <a href="?page={{ quoteapp.previous_page_number }}">&nbsp;&nbsp;&lt;Previous page&nbsp;</a>
+        {% endif %}
+    
+        <span>
+            Page {{ quotes.number }} of {{ quotes.paginator.num_pages }}
+        </span>
+    
+        {% if quotes.has_next %}
+        <a href="?page={{ quoteapp.next_page_number }}">&nbsp;Next page&gt;&nbsp;&nbsp;</a>
+        <a href="?page={{ quoteapp.paginator.num_pages }}">Last page&gt;&gt;</a>
+        {% endif %}
+    </span>
+
+
+
+
+
+{% endblock %}
