@@ -11,13 +11,13 @@ from .models import Author, Quote
 
 # Create your views here.
 def main(request):
-    all_quotes = Quote.objects.all()
+    all_quotes = Quote.objects.all()  # get all objects(quotes) from DB
     # https://docs.djangoproject.com/en/4.1/topics/pagination/
     paginator = Paginator(all_quotes, 10)
     # A dictionary-like object containing all given HTTP GET parameters. 
     # https://docs.djangoproject.com/en/4.1/ref/request-response/
     # https://stackoverflow.com/questions/3500859/django-request-get
-    page_number = request.GET.get('page', 1)
+    page_number = request.GET.get('page', 1)  # number of page
     quotes = paginator.get_page(page_number)
     return render(request, 'quoteapp/index.html', context={"title": "By Den from Web 9 Group!", 
                                                            'quotes': quotes, 
@@ -48,9 +48,10 @@ def upload_quote(request):
             # quote = form.save(commit=False)
             # quote.user = request.user
             # quote.save()
-            quote = form.save(commit=False)
-            quote.tags = tags_str_to_list(form.tags)
-            quote.save()
+            # quote = form.save(commit=False)
+            # quote.tags = tags_str_to_list(quote.tags)  # form.tags
+            # quote.save()
+            form.save()
             return redirect(to='quoteapp:main')
 
     # request.method == 'POST' OR not form.is_valid() - просто виконуємо рендер шаблону:
@@ -75,8 +76,8 @@ def about_quote(request, quote_id_fs):
 
 def search_by_tag(request, tag_fs=''):
     # https://docs.djangoproject.com/en/4.1/ref/models/querysets/
-    # quotes = Quote.objects.filter(tags__icontains=tag_fs)
-    quotes = Quote.objects.all()
+    quotes = Quote.objects.filter(tags__icontains=tag_fs)
+    # quotes = Quote.objects.all()
     title = f'Search by "{tag_fs}"'
     return render(request, 'quoteapp/the_search_result.html', {'quotes': quotes, 
                                                                'title': title,
@@ -94,9 +95,9 @@ def remove_author(request, author_id_fs):
     return redirect(to='quoteapp:main')
 
 
-def top_10(request):
+def top_10(request):  # !!!
     tags = Quote.objects.values_list('tags', flat=True)
-    tags_list = list(itertools.chain.from_iterable(tags))
+    tags_list = list(itertools.chain.from_iterable(tags))  # TypeError: 'int' object is not iterable
     tags_set = set(tags_list)
     result = []
     for tag in tags_set:

@@ -27,6 +27,13 @@ class Author(models.Model):
     #     db_table = 'author'
 
 
+class Tag(models.Model):
+    tittle = models.CharField(max_length=15, unique=True)
+
+    def __str__(self) -> str:
+        return f"{self.tittle}"
+
+
 class Quote(models.Model):
     # quote_id = models.AutoField(primary_key=True, null=False)
     author = models.ForeignKey(Author, on_delete=models.CASCADE, default=1)  # Many-to-one relationships
@@ -34,8 +41,9 @@ class Quote(models.Model):
     # tags = models.CharField(max_length=200) # or ArrayField(models.TextField(max_length=200))
     # https://stackoverflow.com/questions/44630642/is-it-possible-to-store-an-array-in-django-model
     # tags = models.JSONField()  # set limits ?  # 
-    tags = ArrayField(models.TextField(max_length=200), size=8, blank=False)  # , default=list ??; size is an optional argument
-
+    # tags = ArrayField(models.TextField(max_length=200), size=8, blank=False)  # , default=list ??; size is an optional argument
+    tags = models.ManyToManyField('Tag', blank=False, related_name='quotes') # models.ForeignKey(Tag, on_delete=models.CASCADE)
+    # !!!
     def __str__(self):
         return f'{self.quote}'
     

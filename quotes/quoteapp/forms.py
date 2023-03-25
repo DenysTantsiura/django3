@@ -2,11 +2,12 @@ from django.forms import (
                           CharField,
                           DateField,
                           ModelChoiceField,
+                          ModelMultipleChoiceField,
                           ModelForm,
                           TextInput,
                           )
 
-from .models import Author, Quote
+from .models import Author, Tag, Quote
 
 
 class AuthorForm(ModelForm):
@@ -22,17 +23,28 @@ class AuthorForm(ModelForm):
         fields = ['fullname', 'born_date', 'born_location', 'description']
 
 
+# class TagForm(ModelForm):
+
+#     tag = CharField(min_length=2, max_length=15, required=True, widget=TextInput())
+
+#     class Meta:
+#         model = Tag
+#         fields = ['tag']
+
+
 class QuoteForm(ModelForm):
 
     quote = CharField(min_length=10, max_length=2000, required=True, widget=TextInput(attrs={"class": "form-control"}))
     # author = CharField(min_length=10, max_length=2000, required=True, widget=TextInput(attrs={"class": "form-control"}))  # ! id? by model ?
     author = ModelChoiceField(queryset=Author.objects.all(), required=True)
-    tags =  CharField(max_length=32, required=True, widget=TextInput(attrs={'placeholder': 'Enter tags separated by comma.'}))# list? json from string ?
-    
+    # tags =  CharField(max_length=32, required=True, widget=TextInput(attrs={'placeholder': 'Enter tags separated by comma.'}))# list? json from string ?
+    tags = ModelMultipleChoiceField(queryset=Tag.objects.all())  # or Tag() # , required=True, widget=CheckboxSelectMultiplev
+
+
     class Meta:
         model = Quote
         fields = ['quote', 'author', 'tags']
 
-    def clean_tags(self):
-        return [tag.strip() for tag in self.cleaned_data['tags'].split(',')]
-    
+    # def clean_tags(self):
+    #     return [tag.strip() for tag in self.cleaned_data['tags'].split(',')]
+ 
