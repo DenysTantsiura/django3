@@ -5,6 +5,9 @@
     {% for quote in quotes %}
     <ul>
         <li><label>{{ quote.quote }}</label></li> 
+        <li><a href="{% url 'quoteapp:about_author' author_id_fs=quote.author.author_id %}">by<b>
+                    {{ quote.author.fullname }}
+                </b></a></li>
         <li>
             <label>Tags:
                 {% for tag in quote.tags.all %}
@@ -12,10 +15,8 @@
                 {% endfor %}
             </label>
         </li>
-        <li><a href="{% url 'quoteapp:about_author' author_id_fs=quote.author.author_id %}">by<b> 
-            {{ quote.author.fullname }} 
-            </b></a></li>
-        <a href="{% url 'quoteapp:about_quote' quote_id_fs=quote.quote_id %}">About Author</a> <!--role="button"-->
+        
+        <a href="{% url 'quoteapp:about_quote' quote_id_fs=quote.quote_id %}">About Quote</a> <!--role="button"-->
     </ul>
     {% endfor %}
     <span>

@@ -17,7 +17,7 @@
 {% if user.is_authenticated %}
 <div>
     <a href="{% url 'quoteapp:remove_quote' quote_id_fs=quote.quote_id %}" class="btn btn-danger" role="button">Remove quote</a>
-    <a href="{% url 'quoteapp:edit_quote' quote_id_fs=quote.quote_id %}" class="btn btn-info">Edit quote</a>
+    <a href="{% url 'quoteapp:edit_quote' quote_id_fs=quote.quote_id %}" class="btn btn-info" role="button">Edit quote</a>
 </div>
 {% endif %}
 {% endblock %}

@@ -17,7 +17,7 @@ urlpatterns = [
     path('quoteapp/remove_author/<int:author_id_fs>/', views.remove_author, name='remove_author'),
     
     path("quoteapp/edit_quote/<int:quote_id_fs>", views.edit_quote, name='edit_quote'),
-    path("quoteapp/edit_author/<int:quote_id_fs>", views.edit_author, name='edit_author'),
+    path("quoteapp/edit_author/<int:author_id_fs>", views.edit_author, name='edit_author'),
         
     path('quoteapp/top_10/', views.top_10, name='top_10'),
 ]  
