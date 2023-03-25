@@ -1,4 +1,5 @@
 import itertools
+from pprint import pprint
 
 from django.conf import settings
 from django.core.paginator import Paginator
@@ -61,14 +62,14 @@ def upload_quote(request):
 
 
 def about_author(request, author_id_fs):
-    author = get_object_or_404(Author, author_id=author_id_fs)
+    author = get_object_or_404(Author, id=author_id_fs)
     return render(request, 'quoteapp/about_author.html', context={'title': 'By Den from Web 9 Group!',
                                                                   'author': author,
                                                                   })  # {'author': author}
 
 
 def about_quote(request, quote_id_fs):
-    quote = get_object_or_404(Quote, quote_id=quote_id_fs)
+    quote = get_object_or_404(Quote, id=quote_id_fs)
     return render(request, 'quoteapp/about_quote.html', context={'title': 'By Den from Web 9 Group!',
                                                                   'quote': quote,
                                                                   })  # {'quote': quote})
@@ -76,12 +77,14 @@ def about_quote(request, quote_id_fs):
 
 def search_by_tag(request, tag_fs=''):
     # https://docs.djangoproject.com/en/4.1/ref/models/querysets/
-    quotes = Quote.objects.filter(tags__icontains=tag_fs)
+    # quotes = Quote.objects.filter(tags__icontains=tag_fs)
+    quotes = Quote.objects.filter(tags__tittle__icontains=tag_fs)  # .get(...)
     # quotes = Quote.objects.all()
     title = f'Search by "{tag_fs}"'
     return render(request, 'quoteapp/the_search_result.html', {'quotes': quotes, 
                                                                'title': title,
                                                                })
+
 
 @login_required
 def remove_quote(request, quote_id_fs):
@@ -104,7 +107,7 @@ def top_10(request):  # !!!
         count = tags_list.count(tag)
         result.append([tag, count])
     tags = sorted(result, key=lambda x: x[1], reverse=True)[:10]
-    print(tags)
+    pprint(tags)
     return render(request, 'quoteapp/top_10.html', {'tags': tags})
 
 

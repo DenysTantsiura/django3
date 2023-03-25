@@ -35,16 +35,27 @@ class AuthorForm(ModelForm):
 class QuoteForm(ModelForm):
 
     quote = CharField(min_length=10, max_length=2000, required=True, widget=TextInput(attrs={"class": "form-control"}))
-    # author = CharField(min_length=10, max_length=2000, required=True, widget=TextInput(attrs={"class": "form-control"}))  # ! id? by model ?
-    author = ModelChoiceField(queryset=Author.objects.all(), required=True)
-    # tags =  CharField(max_length=32, required=True, widget=TextInput(attrs={'placeholder': 'Enter tags separated by comma.'}))# list? json from string ?
+    author = ModelChoiceField(queryset=Author.objects.all(), required=True)  # only 1 Author
     tags = ModelMultipleChoiceField(queryset=Tag.objects.all())  # or Tag() # , required=True, widget=CheckboxSelectMultiplev
+    # tags.cleaned_data = {:,:,}
+    # !!! customize field ?? modify
+    # https://stackoverflow.com/questions/738301/how-to-modify-choices-of-modelmultiplechoicefield
+    # https://cbi-analytics.nl/django-multiple-choice-form-how-to-use-a-modelmultiplechoicefield-function-based-views/
+    # https://stackoverflow.com/questions/33997530/django-modelchoicefield-allow-objects-creation
+    # tags = ModelMultipleChoiceField(queryset=None)
 
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.fields['tags'].queryset = Tag.objects.all() + Tag.objects.none()  # self.cleaned_data.get('tags', [])
+    #     # https://www.programcreek.com/python/example/59672/django.forms.ModelMultipleChoiceField
 
     class Meta:
         model = Quote
         fields = ['quote', 'author', 'tags']
 
-    # def clean_tags(self):
-    #     return [tag.strip() for tag in self.cleaned_data['tags'].split(',')]
+    # https://youtu.be/oNhNzH8FCIM?list=PLlWXhlUMyooaDkd39pknA1-Olj54HtpjX&t=1405
+    # Django standart
+    def clean_tags(self):
+        return self.cleaned_data['tags'].lower() # ! key 100% exist! for method clean_
+        # return [tag.strip() for tag in self.cleaned_data['tags'].split(',')]
  

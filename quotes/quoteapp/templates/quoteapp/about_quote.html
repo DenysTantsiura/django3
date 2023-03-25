@@ -9,7 +9,7 @@
         {{ quote.quote }}
     </label>
     <label>Tags:
-        {% for tag in quote.tags %}
+        {% for tag in quote.tags.all %}
             <a href="{% url 'quoteapp:search_by_tag' tag_fs=tag %}"> {{ tag }}</a>
         {% endfor %}
     </label>
