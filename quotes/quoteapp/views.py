@@ -48,7 +48,9 @@ def upload_quote(request):
             # quote = form.save(commit=False)
             # quote.user = request.user
             # quote.save()
-            form.save()
+            quote = form.save(commit=False)
+            quote.tags = tags_str_to_list(form.tags)
+            quote.save()
             return redirect(to='quoteapp:main')
 
     # request.method == 'POST' OR not form.is_valid() - просто виконуємо рендер шаблону:
@@ -149,6 +151,12 @@ def edit_quote(request, quote_id_fs):
 
 def tags_list_to_str(tags):
     return tags[0] if len(tags) == 1 else ', '.join(tags)
+
+
+def tags_str_to_list(tags):
+    if isinstance(tags, str):
+        return [tag.strip() for tag in tags.split(',')]
+    return tags
 
 
 '''

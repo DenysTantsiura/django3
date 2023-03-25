@@ -34,7 +34,7 @@ class Quote(models.Model):
     # tags = models.CharField(max_length=200) # or ArrayField(models.TextField(max_length=200))
     # https://stackoverflow.com/questions/44630642/is-it-possible-to-store-an-array-in-django-model
     # tags = models.JSONField()  # set limits ?  # 
-    tags = ArrayField(models.TextField(max_length=200))  # , default=list
+    tags = ArrayField(models.TextField(max_length=200), size=8, blank=False)  # , default=list ??; size is an optional argument
 
     def __str__(self):
         return f'{self.quote}'

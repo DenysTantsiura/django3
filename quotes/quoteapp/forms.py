@@ -21,8 +21,6 @@ class AuthorForm(ModelForm):
         model = Author
         fields = ['fullname', 'born_date', 'born_location', 'description']
 
-    def clean_tags(self):
-        return [tag.strip() for tag in self.cleaned_data['tags'].split(',')]
 
 class QuoteForm(ModelForm):
 
@@ -34,3 +32,7 @@ class QuoteForm(ModelForm):
     class Meta:
         model = Quote
         fields = ['quote', 'author', 'tags']
+
+    def clean_tags(self):
+        return [tag.strip() for tag in self.cleaned_data['tags'].split(',')]
+    
