@@ -15,8 +15,8 @@ class AuthorForm(ModelForm):
     fullname = CharField(min_length=3, max_length=30, required=True, widget=TextInput())
     # !!!! date!?? error_messages={'invalid': 'Enter date by format "dd.mm.YYYY"'}):
     born_date = DateField(input_formats=['%d.%m.%Y'], required=True, widget=TextInput())  
-    born_location = CharField(min_length=3, max_length=25, required=True, widget=TextInput())
-    description = CharField(min_length=10, max_length=2000, required=True, widget=TextInput())
+    born_location = CharField(min_length=3, max_length=220, required=True, widget=TextInput())
+    description = CharField(min_length=10, max_length=4000, required=True, widget=TextInput())
     
     class Meta:
         model = Author

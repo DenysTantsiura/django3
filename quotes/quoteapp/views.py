@@ -1,3 +1,4 @@
+from datetime import datetime
 import itertools
 from pprint import pprint
 
@@ -5,14 +6,24 @@ from django.conf import settings
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
+import pymongo  # pymongo is a driver
+from pymongo.server_api import ServerApi
 
 from .forms import AuthorForm, QuoteForm
-from .models import Author, Quote
+from .models import Author, Tag, Quote
+from quotes.authentication import get_password
+from mongodatabase.unseed import download_data_from_mongodb
+
+
+MONGO_KEY = 'mongo_key.txt'  # to settings.py?
 
 
 # Create your views here.
 def main(request):
     all_quotes = Quote.objects.all()  # get all objects(quotes) from DB
+    if len(all_quotes) < 9:# == len(Quote.objects.none()):
+        migrate_db_from_mongo()
+    
     # https://docs.djangoproject.com/en/4.1/topics/pagination/
     paginator = Paginator(all_quotes, 10)
     # A dictionary-like object containing all given HTTP GET parameters. 
@@ -23,6 +34,101 @@ def main(request):
     return render(request, 'quoteapp/index.html', context={"title": "By Den from Web 9 Group!", 
                                                            'quotes': quotes, 
                                                            })
+
+
+def connect_to_mongodb():
+    """Connect to  cloud database Atlas MongoDB (quoters_book)."""
+    mongodb_password = get_password(MONGO_KEY)
+    #  full driver connection from Database Deployments:  (mongodb+srv:)
+    client = pymongo.MongoClient(
+        host=f'mongodb+srv://tdv:{mongodb_password}@cluster0.7ylfcax.mongodb.net/?retryWrites=true&w=majority',
+        server_api=ServerApi('1'))
+    
+    dbnames: list[str] = client.list_database_names()  # client.list_database_names()
+    # print(f"all{dbnames}======================================")
+    if 'quoters_book' in dbnames:
+        print("It's there!======================================")
+        return True
+    # if client['quoters_book']:
+    #     print("It's there!========================================")
+    #     return True
+
+    # client.quoters_book  # we refer to a non-existent database quoters_book and it is automatically created
+
+
+def migrate_db_from_mongo():
+    if connect_to_mongodb():
+        quotes_in_json, authors_in_json = download_data_from_mongodb()
+        # prepare data
+
+        # write to postgress
+
+        # form = AuthorForm()
+        # print(f'FREE FORM:||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||\n{form}')
+        # for author in authors_in_json:
+        #     # print(f'........{author}........')
+        #     form = AuthorForm()
+        #     form.fullname = author['fullname']
+        #     form.born_date = datetime.strptime(author['born_date'], '%B %d, %Y').strftime('%d.%m.%Y')  # author['born_date']  # !! October 14, 1894   to 14.10.1894
+        #     form.born_location = author['born_location']
+        #     form.description = author['description']
+        # print(f'FULL FORM:||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||\n{form.description}')
+        # # form = AuthorForm(request.POST)
+        # if form.is_valid():
+        #     form.save()
+        # else:
+        #     print('Oooops!')
+        help_dict = {}
+        print(f'@'*55)
+        for author in authors_in_json:
+            # print(f'........{author}........')
+            new_author = Author()
+            new_author.fullname = author['fullname']
+            new_author.born_date = datetime.strptime(author['born_date'], '%B %d, %Y').strftime('%Y-%m-%d')  # author['born_date']  # !! October 14, 1894   to 1894-10-14
+            new_author.born_location = author['born_location']
+            new_author.description = author['description']
+            # print(f"AID:\t{author['_id']}")
+            # new_author.id = author['_id']
+            try:
+                help_dict[author['_id']] = Author.objects.get(fullname=author['fullname']).id
+                new_author.save()
+                help_dict[author['_id']] = Author.objects.get(fullname=author['fullname']).id  # new_author.id  # latest_question_list = Quote.objects.get(fullname=author['fullname']).id
+            except:
+                print(f'Error with {new_author.id}')  # None # print('.')
+
+        print(help_dict)
+        # [print(quote['author']) for quote in quotes_in_json if quote['author'] in help_dict]
+        print(f'@'*55)
+        for quote1 in quotes_in_json:
+            # print(f'........{author}........')
+            new_quote = Quote()
+            new_quote.quote = quote1['quote']
+            # new_quote.author = Author.objects.get(id=help_dict[quote1['author']]).id  # quote1['author']
+            new_quote.author = Author.objects.get(id=help_dict[quote1['author']])
+            print(new_quote.author)
+            # new_quote.tags = quote1['tags']  # !!!!!
+            print(quote1['tags'])
+            list_tag_for_save = []
+            for tag in quote1['tags']:
+                # new_tage = Tag(tittle=tag)
+                new_tage = Tag()
+                new_tage.tittle = tag
+                try:
+                    new_tage.save()
+                    # !!!???!!! new_quote.tags.add(new_tage)
+                except:
+                    print(f'Tag {Tag.objects.get(tittle=tag)} is already exist!!!___________________')# None
+                print(f'~~~~~~~~~~~~~~~~~~~{Tag.objects.get(tittle=tag)}')
+                list_tag_for_save.append(Tag.objects.get(tittle=tag)) if Tag.objects.get(tittle=tag) else None
+            # new_quote.tags.add(*list_tag_for_save)  # new_quote.tags.add(Tag.objects.get(tittle=tag))
+            try:
+                new_quote.save()
+                new_quote.tags.add(*list_tag_for_save)
+            except:
+                None # print('.')
+    else:
+        print('----------NO CONNECT WITH MONGO-----------')
+
 
 @login_required
 def upload_author(request):

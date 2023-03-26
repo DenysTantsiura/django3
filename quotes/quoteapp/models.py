@@ -11,8 +11,8 @@ class Author(models.Model):
     fullname = models.CharField(max_length=30, null=False, unique=True)
     # born_date = models.CharField(max_length=20, null=False)  # models.DateTimeField(auto_now_add=False)
     born_date = models.DateField()
-    born_location = models.CharField(max_length=25, null=False)
-    description = models.CharField(max_length=2000, null=False)  # or TextField()?
+    born_location = models.CharField(max_length=220, null=False)
+    description = models.CharField(max_length=4000, null=False)  # or TextField()?
 
     # https://stackoverflow.com/questions/25205228/django-autofield-with-primary-key-vs-default-pk
     @property
