@@ -37,7 +37,7 @@ class QuoteForm(ModelForm):
 
     quote = CharField(min_length=10, max_length=2000, required=True, widget=TextInput(attrs={"class": "form-control"}))
     author = ModelChoiceField(queryset=Author.objects.all(), required=True)  # only 1 Author
-    tags = ModelMultipleChoiceField(queryset=Tag.objects.all(), required=True, widget=CheckboxSelectMultiple)  # or Tag() # , required=True, widget=CheckboxSelectMultiple
+    tags = ModelMultipleChoiceField(queryset=Tag.objects.all(), widget=CheckboxSelectMultiple)  # or Tag() # , required=True, widget=CheckboxSelectMultiple
     # tags.cleaned_data = {:,:,}
     # !!! customize field ?? modify
     # https://stackoverflow.com/questions/738301/how-to-modify-choices-of-modelmultiplechoicefield

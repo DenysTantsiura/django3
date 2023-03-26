@@ -1,7 +1,12 @@
 {% extends "quoteapp/base.html" %}
 
 {% block content %}
-
+    <h3>{{ tittle }}</h3>
+    Most popular:
+    {% for top_tag in tags %}
+    <a href="{% url 'quoteapp:search_by_tag' tag_fs=top_tag.0.tittle %}"> #{{ top_tag.0 }} </a>
+    {% endfor %}
+    <br>
     {% for quote in quotes %}
     <ul>
         <li><label>{{ quote.quote }}</label></li> 

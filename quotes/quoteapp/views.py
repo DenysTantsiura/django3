@@ -1,3 +1,4 @@
+from collections import Counter
 from datetime import datetime
 import itertools
 from pprint import pprint
@@ -31,8 +32,11 @@ def main(request):
     # https://stackoverflow.com/questions/3500859/django-request-get
     page_number = request.GET.get('page', 1)  # number of page
     quotes = paginator.get_page(page_number)
-    return render(request, 'quoteapp/index.html', context={"title": "By Den from Web 9 Group!", 
+    tags = get_top_tags()
+
+    return render(request, 'quoteapp/index.html', context={"tittle": "By Den from Web 9 Group!", 
                                                            'quotes': quotes, 
+                                                           'tags': tags,
                                                            })
 
 
@@ -167,12 +171,11 @@ def about_quote(request, quote_id_fs):
 
 def search_by_tag(request, tag_fs=''):
     # https://docs.djangoproject.com/en/4.1/ref/models/querysets/
-    # quotes = Quote.objects.filter(tags__icontains=tag_fs)
-    quotes = Quote.objects.filter(tags__tittle__icontains=tag_fs)  # .get(...)
-    # quotes = Quote.objects.all()
-    title = f'Search by "{tag_fs}"'
+    # quotes = Quote.objects.filter(tags__tittle__icontains=tag_fs)  # .get(...)
+    quotes = Quote.objects.filter(tags__tittle=tag_fs)   
+    tittle = f'Search by "{tag_fs}"'
     return render(request, 'quoteapp/the_search_result.html', {'quotes': quotes, 
-                                                               'title': title,
+                                                               'tittle': tittle,
                                                                })
 
 
@@ -188,17 +191,45 @@ def remove_author(request, author_id_fs):
     return redirect(to='quoteapp:main')
 
 
+def get_top_tags(top_count: int = 10) -> list:
+    # https://docs.djangoproject.com/en/4.1/ref/models/querysets/
+    # https://stackoverflow.com/questions/13070461/get-indices-of-the-top-n-values-of-a-list    
+    tags = list(Quote.objects.values_list('tags', flat=True))
+    # https://stackoverflow.com/questions/65201807/get-the-most-bought-top-10-items-as-a-list
+    # https://www.geeksforgeeks.org/python-find-most-frequent-element-in-a-list/
+    # https://docs.python.org/3/library/collections.html
+    occurence_count = Counter(tags)
+    top_tags = occurence_count.most_common(top_count)
+    # https://stackoverflow.com/questions/9304908/how-can-i-filter-a-django-query-with-a-list-of-values
+    # tags = Tag.objects.filter(tags__id__in=top_10_tags) 
+    # # https://stackoverflow.com/questions/4411049/how-can-i-find-the-union-of-two-django-querysets  
+        # tags = Tag.objects.filter(id=top_10_tags[0][0])
+        # for tag in top_10_tags[1:]:
+        #     tags = tags.union(Tag.objects.filter(id=tag[0]))
+
+    tags = []
+    for tag in top_tags:
+        tags.append((Tag.objects.get(id=tag[0]),tag[1]))
+                    
+    return tags
+
+
 def top_10(request):  # !!!
-    tags = Quote.objects.values_list('tags', flat=True)
-    tags_list = list(itertools.chain.from_iterable(tags))  # TypeError: 'int' object is not iterable
-    tags_set = set(tags_list)
-    result = []
-    for tag in tags_set:
-        count = tags_list.count(tag)
-        result.append([tag, count])
-    tags = sorted(result, key=lambda x: x[1], reverse=True)[:10]
-    pprint(tags)
+    
+    tags = get_top_tags()
+
     return render(request, 'quoteapp/top_10.html', {'tags': tags})
+
+
+# def search_by_top(request, tag_fs=''):
+#     # https://docs.djangoproject.com/en/4.1/ref/models/querysets/
+#     # quotes = Quote.objects.filter(tags__icontains=tag_fs)
+#     quotes = Quote.objects.filter(tags__id__in=tag_fs)  # .get(...)
+#     # quotes = Quote.objects.all()
+#     title = f'Search by "{tag_fs}"'
+#     return render(request, 'quoteapp/top_10.html', {'quotes': quotes, 
+#                                                                'title': title,
+#                                                                })
 
 
 @login_required
