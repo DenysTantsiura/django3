@@ -239,15 +239,15 @@ def edit_author(request, author_id_fs):
         born_date = request.POST.get('born_date')
         born_location = request.POST.get('born_location')
         description = request.POST.get('description')
-        # ??? author_id
-        Author.objects.filter(pk=author_id_fs, user=request.user).update(fullname=fullname, 
-                                                                         born_date=born_date, 
-                                                                         born_location=born_location,
-                                                                         description=description,
-                                                                         )
+
+        Author.objects.filter(pk=author_id_fs).update(fullname=fullname, 
+                                                        born_date=born_date, 
+                                                        born_location=born_location,
+                                                        description=description,
+                                                        )
         return redirect(to="quoteapp:main")
 
-    author = Author.objects.filter(pk=author_id_fs, user=request.user).first()
+    author = Author.objects.filter(pk=author_id_fs).first()
     return render(request, "quoteapp/edit_author.html",
                   context={"title": "By Den from Web 9 Group!", 
                            "author": author, 
@@ -261,13 +261,13 @@ def edit_quote(request, quote_id_fs):
         author = request.POST.get('author')
         tags = request.POST.get('tags')
 
-        Quote.objects.filter(pk=quote_id_fs, user=request.user).update(quote=quote, 
+        Quote.objects.filter(pk=quote_id_fs).update(quote=quote, 
                                                                        author=author, 
                                                                        tags=tags
                                                                        )  # !? tags json from str?
         return redirect(to="quoteapp:main")
 
-    quote = Quote.objects.filter(pk=quote_id_fs, user=request.user).first()
+    quote = Quote.objects.filter(pk=quote_id_fs).first()  # , user=request.user
     return render(request, "quoteapp/edit_quote.html",
                   context={"title": "By Den from Web 9 Group!", 
                            "quote": quote, 
