@@ -28,7 +28,7 @@ class Author(models.Model):
 
 
 class Tag(models.Model):
-    tittle = models.CharField(max_length=15, unique=True)
+    tittle = models.CharField(max_length=60, unique=True)
 
     def __str__(self) -> str:
         return f"{self.tittle}"

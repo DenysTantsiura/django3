@@ -17,38 +17,38 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="/">Quotes to Scrape</a>
+                            <a class="nav-link" href="/" role="button">Quotes to Scrape</a>
                         </li>
 
                         {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'quoteapp:main' %}">Quotes</a>
+                            <a class="nav-link" href="{% url 'quoteapp:main' %}" class="btn btn-info" role="button">Quotes</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'quoteapp:upload_author' %}">Add a Author</a>
+                            <a class="nav-link" href="{% url 'quoteapp:upload_author' %}" class="btn btn-info" role="button">Add a Author</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'quoteapp:upload_quote' %}">Add a quote</a>
+                            <a class="nav-link" href="{% url 'quoteapp:upload_quote' %}" class="btn btn-info" role="button">Add a quote</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'quoteapp:top_10' %}">Top10 TAGS</a>
+                            <a class="nav-link" href="{% url 'quoteapp:top_10' %}" class="btn btn-info" role="button">Top10 TAGS</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'users:logout' %}">(Logout)</a>
+                            <a class="nav-link" href="{% url 'users:logout' %}" class="btn btn-info" role="button">(Logout)</a>
                         </li>
 
                         {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'quoteapp:main' %}">Quotes</a>
+                            <a class="nav-link" href="{% url 'quoteapp:main' %}" class="btn btn-info" role="button">Quotes</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'quoteapp:top_10' %}">Top10 TAGS</a>
+                            <a class="nav-link" href="{% url 'quoteapp:top_10' %}" class="btn btn-info" role="button">Top10 TAGS</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'users:login' %}">Sign-In</a>
+                            <a class="nav-link" href="{% url 'users:login' %}" class="btn btn-info" role="button">Sign-In</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'users:register' %}">Sign-Up</a>
+                            <a class="nav-link" href="{% url 'users:register' %}" class="btn btn-info" role="button">Sign-Up</a>
                         </li>
                         {% endif %}
                     </ul>

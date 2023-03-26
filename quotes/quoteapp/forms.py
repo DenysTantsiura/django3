@@ -1,5 +1,6 @@
 from django.forms import ( 
                           CharField,
+                          CheckboxSelectMultiple,
                           DateField,
                           ModelChoiceField,
                           ModelMultipleChoiceField,
@@ -36,7 +37,7 @@ class QuoteForm(ModelForm):
 
     quote = CharField(min_length=10, max_length=2000, required=True, widget=TextInput(attrs={"class": "form-control"}))
     author = ModelChoiceField(queryset=Author.objects.all(), required=True)  # only 1 Author
-    tags = ModelMultipleChoiceField(queryset=Tag.objects.all())  # or Tag() # , required=True, widget=CheckboxSelectMultiplev
+    tags = ModelMultipleChoiceField(queryset=Tag.objects.all(), required=True, widget=CheckboxSelectMultiple)  # or Tag() # , required=True, widget=CheckboxSelectMultiple
     # tags.cleaned_data = {:,:,}
     # !!! customize field ?? modify
     # https://stackoverflow.com/questions/738301/how-to-modify-choices-of-modelmultiplechoicefield
@@ -56,6 +57,6 @@ class QuoteForm(ModelForm):
     # https://youtu.be/oNhNzH8FCIM?list=PLlWXhlUMyooaDkd39pknA1-Olj54HtpjX&t=1405
     # Django standart
     def clean_tags(self):
-        return self.cleaned_data['tags'].lower() # ! key 100% exist! for method clean_
+        return self.cleaned_data['tags'] # ! key 100% exist! for method clean_  .lower() ?
         # return [tag.strip() for tag in self.cleaned_data['tags'].split(',')]
  

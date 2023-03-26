@@ -59,25 +59,9 @@ def connect_to_mongodb():
 def migrate_db_from_mongo():
     if connect_to_mongodb():
         quotes_in_json, authors_in_json = download_data_from_mongodb()
-        # prepare data
 
-        # write to postgress
+        # write to postgress:
 
-        # form = AuthorForm()
-        # print(f'FREE FORM:||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||\n{form}')
-        # for author in authors_in_json:
-        #     # print(f'........{author}........')
-        #     form = AuthorForm()
-        #     form.fullname = author['fullname']
-        #     form.born_date = datetime.strptime(author['born_date'], '%B %d, %Y').strftime('%d.%m.%Y')  # author['born_date']  # !! October 14, 1894   to 14.10.1894
-        #     form.born_location = author['born_location']
-        #     form.description = author['description']
-        # print(f'FULL FORM:||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||\n{form.description}')
-        # # form = AuthorForm(request.POST)
-        # if form.is_valid():
-        #     form.save()
-        # else:
-        #     print('Oooops!')
         help_dict = {}
         print(f'@'*55)
         for author in authors_in_json:
@@ -115,13 +99,13 @@ def migrate_db_from_mongo():
                 new_tage.tittle = tag
                 try:
                     new_tage.save()
-                    # !!!???!!! new_quote.tags.add(new_tage)
                 except:
                     print(f'Tag {Tag.objects.get(tittle=tag)} is already exist!!!___________________')# None
                 print(f'~~~~~~~~~~~~~~~~~~~{Tag.objects.get(tittle=tag)}')
                 list_tag_for_save.append(Tag.objects.get(tittle=tag)) if Tag.objects.get(tittle=tag) else None
-            # new_quote.tags.add(*list_tag_for_save)  # new_quote.tags.add(Tag.objects.get(tittle=tag))
             try:
+                # https://stackoverflow.com/questions/4959499/how-to-add-multiple-objects-to-manytomany-relationship-at-once-in-django
+                # https://docs.djangoproject.com/en/4.1/topics/db/examples/many_to_many/
                 new_quote.save()
                 new_quote.tags.add(*list_tag_for_save)
             except:
@@ -270,6 +254,16 @@ def tags_str_to_list(tags):
 
 
 '''
+
+
+def get_object(self, id):
+    try:
+        return Comment.objects.get(pk=id)
+    except Comment.DoesNotExist:
+        return False
+
+
+
 @login_required
 def quotes(request):
     quotes = Quote.objects.filter(user=request.user).all()

@@ -4,7 +4,7 @@
 <div>
     {% for tag in tags %}
     <ul>
-        <li>Tags: <a href="{% url 'quoteapp:search_by_tag' tag_fs=tag.0 %}">"{{ tag.0 }}"</a> rating: {{ tag.1 }}</li>
+        <li>Tags: <a href="{% url 'quoteapp:search_by_tag' tag_fs=tag.0 %}" class="btn btn-info" role="button">"{{ tag.0 }}"</a> rating: {{ tag.1 }}</li>
     </ul>
     {% endfor %}
 </div>
