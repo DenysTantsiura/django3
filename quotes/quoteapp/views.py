@@ -118,6 +118,11 @@ def migrate_db_from_mongo():
         print('----------NO CONNECT WITH MONGO-----------')
 
 
+def scrap_quotes(request):
+    print('0-'*98)
+    return redirect(to='quoteapp:main')
+
+
 @login_required
 def upload_author(request):
     form = AuthorForm()
@@ -256,22 +261,55 @@ def edit_author(request, author_id_fs):
 
 @login_required
 def edit_quote(request, quote_id_fs):
+    form = QuoteForm()
+    # https://stackoverflow.com/questions/604266/django-set-default-form-values
     if request.method == 'POST':
-        quote = request.POST.get('quote')
-        author = request.POST.get('author')
-        tags = request.POST.get('tags')
+        form = QuoteForm(request.POST)  # request.POST, request.FILES, instance=Quote() 
+        # if form.is_valid():
+        #     form.save()
+        #     return redirect(to='quoteapp:main')
+        # quote = request.POST.get('quote')
+        # author = request.POST.get('author')
+        # tags = request.POST.get('tags')
 
-        Quote.objects.filter(pk=quote_id_fs).update(quote=quote, 
-                                                                       author=author, 
-                                                                       tags=tags
-                                                                       )  # !? tags json from str?
-        return redirect(to="quoteapp:main")
 
+        if form.is_valid():
+            print('0-'*98)
+            Quote.objects.get(pk=quote_id_fs).delete()
+            form.save()
+            return redirect(to='quoteapp:main')
+
+            quote_form = form.save(commit=False)
+            id = quote_id_fs
+            quote = quote_form.quote
+            author = quote_form.author
+            tags = quote_form.tags
+            # needs to have a value for field "id" before this many-to-many relationship can be used!!!!
+            tags = [i.id for i in quote_form.tags.all()]
+
+            Quote.objects.filter(pk=quote_id_fs).update(quote=quote, 
+                                                    author=author, 
+                                                    # tags=tags,
+                                                    id=id,
+                                                    )  # !? tags json from str?
+
+
+            return redirect(to="quoteapp:main")
+
+    # return render(request, 'quoteapp/upload_quote.html', context={'title': 'By Den from Web 9 Group!', 
+    #                                                               'form': form,
+    #                                                               })
     quote = Quote.objects.filter(pk=quote_id_fs).first()  # , user=request.user
+    form = QuoteForm(initial={"quote": quote, 'author': quote.author, 'tags': [i.id for i in quote.tags.all()]}) 
     return render(request, "quoteapp/edit_quote.html",
                   context={"title": "By Den from Web 9 Group!", 
                            "quote": quote, 
+                           'form': form,
                            })
+'''
+model2_inst = model2.objects.get(id=objectid)
+form = model2_form(instance=model2_inst)
+'''
 
 
 def tags_list_to_str(tags):

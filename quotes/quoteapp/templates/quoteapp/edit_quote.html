@@ -1,22 +1,33 @@
 {% extends "quoteapp/base.html" %}
 
 {% block content %}
-<h1>Change a Quote</h1>
-<form action="{% url 'quoteapp:edit_quote' quote.id %}" method="post">
+
+<div>
+    <p>Upload a quote</p>
+</div>
+<form method="post" action="{% url 'quoteapp:edit_quote' quote.id %}">  <!--enctype="multipart/form-data"-->
     {% csrf_token %}
-    <!--<img src="{{media}}{{quote.path}}" width="350" height="350" alt="quote">-->
-    <div class="mb-3">
-        <label class="form-label">Quote:</label>
-        <input type="text" class="form-control" value="{{quote.quote}}" name="quote">
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Author:</label>
-        <input type="text" class="form-control" value="{{quote.author}}" name="author">
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Tags:</label>
-        <input type="text" class="form-control" value="{{quote.tags}}" name="tags">
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+        <div>
+            <label class="form-label">Quote:
+                {{ form.quote }}
+            </label>
+            <span>{{ form.errors.quote }}</span>
+        </div>
+        <div>
+            <label class="form-label">Author:
+                {{ form.author }}
+            </label>
+            <span>{{ form.errors.author }}</span>
+        </div>
+        <div>
+            <label class="form-label"> Tags:
+                {{ form.tags }}
+            </label>
+            <span>{{ form.errors.tags }}</span>
+        </div>
+        <div class="grid">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
 </form>
+
 {% endblock %}
