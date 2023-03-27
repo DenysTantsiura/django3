@@ -10,6 +10,7 @@ python = "^3.10"
 django = "^4.1.7"
 psycopg2 = "^2.9.5"
 mongoengine = "^0.27.0"
+scrapy = "^2.8.0"
 
 
 [build-system]
