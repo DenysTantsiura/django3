@@ -1,7 +1,7 @@
-import json
-from datetime import date
+# import json
+# from datetime import date
 
-from django.contrib.postgres.fields import ArrayField
+# from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 
@@ -17,21 +17,17 @@ class Author(models.Model):
     # https://stackoverflow.com/questions/25205228/django-autofield-with-primary-key-vs-default-pk
     @property
     def author_id(self):
-       return self.id
+        return self.id
 
     def __str__(self):
         return f'{self.fullname}'
-    
-    # class Meta:
-    #     managed = False
-    #     db_table = 'author'
 
 
 class Tag(models.Model):
     tittle = models.CharField(max_length=60, unique=True)
 
     def __str__(self) -> str:
-        return f"{self.tittle}"
+        return f'{self.tittle}'
 
 
 class Quote(models.Model):
@@ -41,16 +37,16 @@ class Quote(models.Model):
     # tags = models.CharField(max_length=200) # or ArrayField(models.TextField(max_length=200))
     # https://stackoverflow.com/questions/44630642/is-it-possible-to-store-an-array-in-django-model
     # tags = models.JSONField()  # set limits ?  # 
-    # tags = ArrayField(models.TextField(max_length=200), size=8, blank=False)  # , default=list ??; size is an optional argument
-    tags = models.ManyToManyField('Tag', blank=False, related_name='quotes') # models.ForeignKey(Tag, on_delete=models.CASCADE)
-    # !!!
+    # tags = ArrayField(models.TextField(max_length=200), size=8, blank=False)  # , default=list; size is an optional
+    tags = models.ManyToManyField('Tag', blank=False, related_name='quotes')
+
     def __str__(self):
         return f'{self.quote}'
     
     # https://stackoverflow.com/questions/25205228/django-autofield-with-primary-key-vs-default-pk
     @property
     def quote_id(self):
-       return self.id
+        return self.id
 
     # def set_tags(self, tag_list):
     #     self.tags = json.dumps(tag_list)

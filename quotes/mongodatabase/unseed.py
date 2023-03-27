@@ -1,5 +1,4 @@
 import json
-from pprint import pprint
 from typing import Any
 
 from mongodatabase.models import Author as MongoAuthor
@@ -39,8 +38,7 @@ def download_data_from_mongodb():
     'born_location': 'in Cambridge, Massachusetts, The United States',
     'description': 'Edward Estlin C...
     '''
-    # pprint(quotes_in_json)
-    # pprint(authors_in_json)
+
     return quotes_in_json, authors_in_json 
 
 
@@ -77,7 +75,7 @@ if __name__ == '__main__':
     save_to_json('jsons_files/authors.json', authors_in_json) if authors_in_json else None
     save_to_json('jsons_files/quotes.json', quotes_in_json) if quotes_in_json else None
 
-    # для завантаження json файлів у хмарну базу даних:
+    # to download json-files to Cloud-database:
     if not MongoQuote.objects():
         upload_authors_to_the_database('../jsons_files/authors.json')
         upload_quotes_to_the_database('../jsons_files/quotes.json')
