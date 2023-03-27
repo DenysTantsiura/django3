@@ -54,6 +54,25 @@ six = "*"
 visualize = ["Twisted (>=16.1.1)", "graphviz (>0.5.1)"]
 
 [[package]]
+name = "beautifulsoup4"
+version = "4.12.0"
+description = "Screen-scraping library"
+category = "main"
+optional = false
+python-versions = ">=3.6.0"
+files = [
+    {file = "beautifulsoup4-4.12.0-py3-none-any.whl", hash = "sha256:2130a5ad7f513200fae61a17abb5e338ca980fa28c439c0571014bc0217e9591"},
+    {file = "beautifulsoup4-4.12.0.tar.gz", hash = "sha256:c5fceeaec29d09c84970e47c65f2f0efe57872f7cff494c9691a26ec0ff13234"},
+]
+
+[package.dependencies]
+soupsieve = ">1.2"
+
+[package.extras]
+html5lib = ["html5lib"]
+lxml = ["lxml"]
+
+[[package]]
 name = "certifi"
 version = "2022.12.7"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -928,6 +947,18 @@ files = [
 ]
 
 [[package]]
+name = "soupsieve"
+version = "2.4"
+description = "A modern CSS selector implementation for Beautiful Soup."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "soupsieve-2.4-py3-none-any.whl", hash = "sha256:49e5368c2cda80ee7e84da9dbe3e110b70a4575f196efb74e51b94549d921955"},
+    {file = "soupsieve-2.4.tar.gz", hash = "sha256:e28dba9ca6c7c00173e34e4ba57448f0688bb681b7c5e8bf4971daafc093d69a"},
+]
+
+[[package]]
 name = "sqlparse"
 version = "0.4.3"
 description = "A non-validating SQL parser."
@@ -1072,6 +1103,17 @@ files = [
 ]
 
 [[package]]
+name = "xlml"
+version = "0.1.2"
+description = "Easy Excel to HTML library for Python (3.x)."
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "XLML-0.1.2.tar.gz", hash = "sha256:ce52f6a6225d7f3250f8a148f26b46fb3250fac7ed0d814d97a289b73152c561"},
+]
+
+[[package]]
 name = "zope-interface"
 version = "6.0"
 description = "Interfaces for Python"
@@ -1122,4 +1164,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "235fc6315fcb5822151232bbe2dd0d6165fef2dba8bee414d0103f0e4edf5ad4"
+content-hash = "c7bd9926a681e2681bde8e2463b66a3083b9b3e227cc7934698a25c1d8084d26"

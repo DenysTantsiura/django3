@@ -1,7 +1,10 @@
 from collections import Counter
 from datetime import datetime
-import itertools
+# import itertools
+import json
 from pprint import pprint
+import re
+from typing import Any
 
 from django.conf import settings
 from django.core.paginator import Paginator
@@ -24,8 +27,8 @@ MONGO_KEY = 'mongo_key.txt'  # to settings.py?
 def main(request):
     all_quotes = Quote.objects.all()  # get all objects(quotes) from DB
     
-    if len(all_quotes) < 9:# == len(Quote.objects.none()):
-        migrate_db_from_mongo()
+    # if len(all_quotes) < 9:# == len(Quote.objects.none()):
+    #     migrate_db_from_mongo()
     
     # https://docs.djangoproject.com/en/4.1/topics/pagination/
     paginator = Paginator(all_quotes, 10)
@@ -119,6 +122,7 @@ def migrate_db_from_mongo():
     else:
         print('----------NO CONNECT WITH MONGO-----------')
 
+
 def read_json_file(file_path: str, encoding: str = 'utf-8') -> Any:
     """Read data from json-file, and return data."""
     with open(file_path, 'r', encoding=encoding) as file:
@@ -127,32 +131,51 @@ def read_json_file(file_path: str, encoding: str = 'utf-8') -> Any:
     return data
 
 
-def upload_authors_to_the_database(file: str) -> None:
-    """Upload authors from json-file to database."""
-    authors = read_json_file(file)
-    [Author(
-        fullname=author['fullname'],
-        born_date=author['born_date'],
-        born_location=author['born_location'],
-        description=author['description']
-        ).save()
-        for author in authors]
-
-
-def upload_quotes_to_the_database(file: str) -> None:
-    """Upload quotes from json-file to database."""
-    quotes = read_json_file(file)
-    for quote in quotes: 
-        author = Author.objects(fullname=quote['author']).first()
-        if author and author.id:  #
-            Quote(
-                tags=quote['tags'],
-                author=author.id,
-                quote=quote['quote']
-                ).save()
-
-        else:
-            print(f'\nAuthor "{quote["author"]}" is unknown!\n')
+def upload_to_the_database(file_a: str, file_q: str) -> None:
+    """Upload from json-files to database."""
+    authors_in_json = read_json_file(file_a)
+    # help_dict = {}
+    for author in authors_in_json:
+            new_author = Author()
+            new_author.fullname = author['fullname']
+            new_author.born_date = datetime.strptime(author['born_date'], '%B %d, %Y').strftime('%Y-%m-%d')  # author['born_date']  # !! October 14, 1894   to 1894-10-14
+            new_author.born_location = author['born_location']
+            new_author.description = author['description']
+            try:
+                # help_dict[author['_id']] = Author.objects.get(fullname=author['fullname']).id
+                new_author.save()
+                # help_dict[Author.objects.get(fullname=author['fullname']).id] = Author.objects.get(fullname=author['fullname']).id  # new_author.id  # latest_question_list = Quote.objects.get(fullname=author['fullname']).id
+            except:
+                print(f'Error with {new_author.id}')  # None # print('.')
+    
+    quotes_in_json = read_json_file(file_q)
+    for quote1 in quotes_in_json:
+        # print(f'........{author}........')
+        new_quote = Quote()
+        new_quote.quote = quote1['quote']
+        # new_quote.author = Author.objects.get(id=help_dict[quote1['author']]).id  # quote1['author']
+        new_quote.author = Author.objects.get(fullname=quote1['author']) # Author.objects.get(id=help_dict[quote1['author']])
+        print(new_quote.author)
+        # new_quote.tags = quote1['tags']  # !!!!!
+        print(quote1['tags'])
+        list_tag_for_save = []
+        for tag in quote1['tags']:
+            # new_tage = Tag(tittle=tag)
+            new_tage = Tag()
+            new_tage.tittle = tag
+            try:
+                new_tage.save()
+            except:
+                print(f'Tag {Tag.objects.get(tittle=tag)} is already exist!!!___________________')# None
+            print(f'~~~~~~~~~~~~~~~~~~~{Tag.objects.get(tittle=tag)}')
+            list_tag_for_save.append(Tag.objects.get(tittle=tag)) if Tag.objects.get(tittle=tag) else None
+        try:
+            # https://stackoverflow.com/questions/4959499/how-to-add-multiple-objects-to-manytomany-relationship-at-once-in-django
+            # https://docs.djangoproject.com/en/4.1/topics/db/examples/many_to_many/
+            new_quote.save()
+            new_quote.tags.add(*list_tag_for_save)
+        except:
+            None # print('.')
 
 
 def scrap_quotes(request):
@@ -162,8 +185,7 @@ def scrap_quotes(request):
     # filling database from json-files 
     # Filling the database - uploading json files to the cloud database:
     if not Quote.objects.all():  # Quote.objects():
-        upload_authors_to_the_database('jsons_files/authors.json')
-        upload_quotes_to_the_database('jsons_files/quotes.json')
+        upload_to_the_database('jsons_files/authors.json', 'jsons_files/quotes.json')
 
     return redirect(to='quoteapp:main')
 
@@ -324,23 +346,7 @@ def edit_quote(request, quote_id_fs):
             form.save()
             return redirect(to='quoteapp:main')
 
-            quote_form = form.save(commit=False)
-            id = quote_id_fs
-            quote = quote_form.quote
-            author = quote_form.author
-            tags = quote_form.tags
-            # needs to have a value for field "id" before this many-to-many relationship can be used!!!!
-            tags = [i.id for i in quote_form.tags.all()]
-
-            Quote.objects.filter(pk=quote_id_fs).update(quote=quote, 
-                                                    author=author, 
-                                                    # tags=tags,
-                                                    id=id,
-                                                    )  # !? tags json from str?
-
-
-            return redirect(to="quoteapp:main")
-
+  
     # return render(request, 'quoteapp/upload_quote.html', context={'title': 'By Den from Web 9 Group!', 
     #                                                               'form': form,
     #                                                               })
