@@ -12,8 +12,12 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 
-# export PYTHONPATH="${PYTHONPATH}:/1prj/example_beautifulsoup_and_scrapy/"
-from authentication import get_password
+# https://stackoverflow.com/questions/29830928/django-db-utils-programmingerror-relation-already-exists
+# python manage.py makemigrations
+# python manage.py migrate
+# python manage.py runserver
+# export PYTHONPATH="${PYTHONPATH}:/1prj/django3/"
+from .authentication import get_password
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -41,6 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "quoteapp",
+    "users",
 ]
 
 MIDDLEWARE = [
@@ -130,6 +136,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/users/signin'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
