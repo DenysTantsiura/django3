@@ -16,6 +16,7 @@ from pathlib import Path
 # python manage.py makemigrations
 # python manage.py migrate
 # python manage.py runserver
+
 # export PYTHONPATH="${PYTHONPATH}:/1prj/django3/"
 from .authentication import get_password
 
@@ -28,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = f'django-insecure-{get_password("dsk.txt")}'
+SECRET_KEY = f'''django-insecure-{get_password('dsk.txt')}'''
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -143,3 +144,32 @@ LOGIN_URL = '/users/signin'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# backends, який буде використовуватися для надсилання електронної пошти. 
+# У цьому випадку використовується backends простого протоколу передачі пошти SMTP
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# ім’я хоста SMTP-сервера, який буде використовуватися для надсилання електронної пошти
+EMAIL_HOST = 'smtp.meta.ua'
+
+# порт, який буде використовуватися у разі підключення до SMTP-сервера
+EMAIL_PORT = 465
+
+# прапорець, який вказує, чи використовувати безпеку транспортного рівня TLS у разі підключення до SMTP-сервера. 
+# будемо використовувати протокол SSL і ставимо значення False
+EMAIL_STARTTLS = False
+
+# прапорець, який вказує, чи варто використовувати SSL у разі підключення до SMTP-сервера
+EMAIL_USE_SSL = True
+
+# прапорець, який вказує, чи варто використовувати TLS у разі підключення до SMTP-сервера
+EMAIL_USE_TLS = False
+
+# ім’я користувача, що використовується під час аутентифікації на SMTP-сервері
+EMAIL_HOST_USER = get_password('metamail.txt')  # 'example@meta.ua'
+
+# пароль, який буде використовуватися під час аутентифікації на SMTP-сервері
+EMAIL_HOST_PASSWORD = get_password('metakey.txt')  # 'secretPassword'
+
+# адреса email за замовчуванням, яка буде використовуватися як адреса "from" для всіх листів з застосунку
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

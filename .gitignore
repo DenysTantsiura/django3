@@ -128,5 +128,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .idea/
-*.txt
-*.txt
+key.txt
+meta*.txt
+dsk.txt
+*key.txt
+
