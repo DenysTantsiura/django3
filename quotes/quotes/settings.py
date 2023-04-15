@@ -17,8 +17,14 @@ from pathlib import Path
 # python manage.py migrate
 # python manage.py runserver
 
+import environ
 # export PYTHONPATH="${PYTHONPATH}:/1prj/django3/"
-from .authentication import get_password
+
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+env = environ.Env()
+environ.Env.read_env(BASE_DIR / '.env')
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -29,7 +35,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = f'''django-insecure-{get_password('dsk.txt')}'''
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -87,20 +93,17 @@ WSGI_APPLICATION = 'quotes.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': BASE_DIR / 'db.sqlite3',
         # https://www.alpharithms.com/django-postgresql-install-tutorial-123816/
         # .postgresql_psycopg2 before v.1.9. The old name will continue to be available for backward compatibility.
         'ENGINE': 'django.db.backends.postgresql',  # django.db.backends.postgresql_psycopg2 before v.1.9.
-        'NAME': 'scgkgtyo',  # DATABASE?
-        'USER': 'scgkgtyo',
-        'PASSWORD': get_password(),
-        'HOST': 'balarama.db.elephantsql.com',
-        # 'PORT': '5432',  # by default
-        'DATABASE': 'scgkgtyo',
+        'NAME': env('DATABASE_NAME'),
+        'USER': env('DATABASE_USER'),
+        'PASSWORD': env('DATABASE_PASSWORD'),
+        'HOST': env('DATABASE_HOST'),
+        # 'PORT': env('DATABASE_PORT'),  # ! by defaulf for cloud DB
+        'DATABASE': env('DATABASE'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -150,10 +153,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # ім’я хоста SMTP-сервера, який буде використовуватися для надсилання електронної пошти
-EMAIL_HOST = 'smtp.meta.ua'
+EMAIL_HOST = env('EMAIL_HOST')
 
 # порт, який буде використовуватися у разі підключення до SMTP-сервера
-EMAIL_PORT = 465
+EMAIL_PORT = env('EMAIL_PORT')
 
 # прапорець, який вказує, чи використовувати безпеку транспортного рівня TLS у разі підключення до SMTP-сервера. 
 # будемо використовувати протокол SSL і ставимо значення False
@@ -166,10 +169,10 @@ EMAIL_USE_SSL = True
 EMAIL_USE_TLS = False
 
 # ім’я користувача, що використовується під час аутентифікації на SMTP-сервері
-EMAIL_HOST_USER = get_password('metamail.txt')  # 'example@meta.ua'
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 
 # пароль, який буде використовуватися під час аутентифікації на SMTP-сервері
-EMAIL_HOST_PASSWORD = get_password('metakey.txt')  # 'secretPassword'
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
 # адреса email за замовчуванням, яка буде використовуватися як адреса "from" для всіх листів з застосунку
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

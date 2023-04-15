@@ -21,3 +21,5 @@ Search for quotes by tag. When you click on a tag, a list of quotes with this ta
 Implement the "Top Ten tags" block and display the most popular tags.
 Implement pagination. These are the next and previous buttons
 Instead of transferring data from the MongoDB database, implement the possibility of scraping data directly from your site by pressing a certain button on the form and filling the site database.
+
+poetry add django-environ
